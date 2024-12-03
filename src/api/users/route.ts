@@ -9,11 +9,7 @@ const emailSchema = z.object({
 const userSchema = z.object({
   email: z.string().email("올바른 이메일 형식이 아닙니다"),
   username: z.string().min(2, "이름은 2글자 이상이어야 합니다"),
-  password: z
-    .string()
-    .min(8, "비밀번호는 8자 이상이어야 합니다")
-    .regex(/[0-9]/, "숫자를 포함해야 합니다")
-    .regex(/[a-z]/, "영문 소문자를 포함해야 합니다"),
+  password: z.string().min(8, "비밀번호는 8자 이상이어야 합니다").regex(/[0-9]/, "숫자를 포함해야 합니다").regex(/[a-z]/, "영문 소문자를 포함해야 합니다"),
 });
 
 export async function GET(request: NextRequest) {

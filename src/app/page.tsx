@@ -1,23 +1,61 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+
+type Tweet = {
+  id: number;
+  content: string;
+};
+
 export default function Home() {
+  const [tweets, setTweets] = useState<Tweet[]>([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // 세션 확인
+    const checkSession = async () => {
+      const response = await fetch("/api/tweets");
+      const data = await response.json();
+      setIsLoggedIn(data.isLoggedIn);
+
+      if (data.isLoggedIn) {
+        fetchTweets();
+      }
+    };
+
+    checkSession();
+  }, []);
+
+  const fetchTweets = async () => {
+    try {
+      const response = await fetch("/api/tweets");
+      const data = await response.json();
+      setTweets(data.tweets);
+    } catch (error) {
+      console.error("Error fetching tweets:", error);
+    }
+  };
+
   return (
-    <div className="flex flex-col items-center justify-between min-h-screen p-6">
-      <div className="my-auto flex flex-col items-center gap-2 *:font-medium">
-        <span className="text-9xl">🥕</span>
-        <h1 className="text-4xl ">당근</h1>
-        <h2 className="text-2xl">당근 마겟에 어서오세요!</h2>
-      </div>
-      <div className="flex flex-col items-center gap-3 w-full">
-        <Link href="/create-account" className="primary-btn text-lg py-2.5">
-          시작하기
-        </Link>
-        <div className="flex gap-2">
-          <span>이미 계정이 있나요?</span>
-          <Link href="/log-in" className="hover:underline">
-            로그인
-          </Link>
+    <div className="tweet-list">
+      {isLoggedIn ? (
+        <>
+          <h1>트윗 목록</h1>
+          <ul>
+            {tweets.map((tweet) => (
+              <li key={tweet.id}>
+                <Link href={`/tweets/${tweet.id}`}>{tweet.content}</Link>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : (
+        <div>
+          <p>로그인하세요</p>
+          <Link href="/log-in">로그인</Link>
         </div>
-      </div>
+      )}
     </div>
   );
 }

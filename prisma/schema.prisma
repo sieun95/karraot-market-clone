@@ -1,5 +1,3 @@
-
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,6 +12,13 @@ model User {
   username  String   @unique
   email     String   @unique
   password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Tweet {
+  id        Int      @id @default(autoincrement())
+  content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

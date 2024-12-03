@@ -12,7 +12,7 @@ export default function Login() {
   });
 
   if (state.success) {
-    redirect("/profile");
+    redirect("/");
   }
 
   return (
@@ -23,26 +23,14 @@ export default function Login() {
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">
             이메일
           </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            required
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
+          <input id="email" name="email" type="email" required className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-black" />
           {state.errors?.email && <p className="mt-1 text-sm text-red-600">{state.errors.email[0]}</p>}
         </div>
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-gray-700">
             비밀번호
           </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            required
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
+          <input id="password" name="password" type="password" required className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-black" />
           {state.errors?.password && <p className="mt-1 text-sm text-red-600">{state.errors.password[0]}</p>}
         </div>
         <button type="submit" className="w-full bg-orange-500 text-white py-2 px-4 rounded-md hover:bg-orange-600">
