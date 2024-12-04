@@ -8,12 +8,12 @@ export default function Home() {
         <h2 className="text-2xl">당근 마겟에 어서오세요!</h2>
       </div>
       <div className="flex flex-col items-center gap-3 w-full">
-        <Link href="/create-account" className="primary-btn text-lg py-2.5">
+        <Link href="/sign-up" className="primary-btn text-lg py-2.5">
           회원가입
         </Link>
         <div className="flex gap-2">
           <span>이미 계정이 있나요?</span>
-          <Link href="/log-in" className="hover:underline">
+          <Link href="/sign-in" className="hover:underline">
             로그인
           </Link>
         </div>

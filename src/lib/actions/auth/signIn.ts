@@ -1,31 +1,18 @@
 "use server";
 
-import { z } from "zod";
 import bcrypt from "bcrypt";
-import { getSession } from "@/lib/session";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db/prisma";
+import { SignInState } from "@/types/auth";
+import { signInSchema } from "@/lib/validations/auth";
 
-const loginSchema = z.object({
-  email: z.string().email("올바른 이메일 주소를 입력해주세요"),
-  password: z.string().min(6, "비밀번호는 최소 6자 이상이어야 합니다"),
-});
 
-interface LoginState {
-  errors?: {
-    email?: string[];
-    password?: string[];
-  };
-  success?: boolean;
-}
-
-export async function loginAction(prevState: LoginState, formData: FormData) {
-  // 1. 입력값 유효성 검사
+export async function signInAction(prevState: SignInState, formData: FormData) {
   const data = {
     email: formData.get("email"),
     password: formData.get("password"),
   };
 
-  const result = loginSchema.safeParse(data);
+  const result = signInSchema.safeParse(data);
   if (!result.success) {
     return { errors: result.error.flatten().fieldErrors };
   }
@@ -33,6 +20,10 @@ export async function loginAction(prevState: LoginState, formData: FormData) {
   // 2. 이메일 존재 여부 확인
   const user = await prisma.user.findUnique({
     where: { email: result.data.email },
+    select: {
+      id: true,
+      password: true,
+    },
   });
 
   if (!user) {
@@ -54,14 +45,6 @@ export async function loginAction(prevState: LoginState, formData: FormData) {
     };
   }
 
-  // 4. 로그인 성공 - 세션 생성
-  const session = await getSession();
-  session.user = {
-    id: user.id,
-    email: user.email,
-    name: user.username,
-  };
-  await session.save();
 
   return { success: true };
 }

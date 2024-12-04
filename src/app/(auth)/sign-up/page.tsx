@@ -1,20 +1,20 @@
 "use client";
 
 import { useFormState } from "react-dom";
-import { createAccountAction } from "@/lib/actions/createAccount";
-import FormInput from "@/components/form-input";
-import FormButton from "@/components/form-btn";
-import SocialLogin from "@/components/social-login";
+import { signUpAction } from "@/lib/actions/auth/signUp";
+import FormInput from "@/components/ui/form-input";
+import FormButton from "@/components/ui/form-btn";
+import SocialLogin from "@/components/ui/social-login";
 import { redirect } from "next/navigation";
 
-export default function CreateAccount() {
-  const [state, formAction] = useFormState(createAccountAction, {
+export default function SignUp() {
+  const [state, formAction] = useFormState(signUpAction, {
     errors: { username: [], email: [], password: [], passwordConfirm: [], _form: [] },
     success: undefined,
   });
 
   if (state.success) {
-    redirect("/log-in");
+    redirect("/sign-in");
   }
 
   return (
@@ -27,13 +27,7 @@ export default function CreateAccount() {
         <FormInput name="username" type="text" placeholder="유저 이름" required={true} errors={state.errors?.username || []} />
         <FormInput name="email" type="email" placeholder="이메일" required={true} errors={state.errors?.email || []} />
         <FormInput name="password" type="password" placeholder="비밀번호" required={true} errors={state.errors?.password || []} />
-        <FormInput
-          name="passwordConfirm"
-          type="password"
-          placeholder="비밀번호 확인"
-          required={true}
-          errors={state.errors?.passwordConfirm || []}
-        />
+        <FormInput name="passwordConfirm" type="password" placeholder="비밀번호 확인" required={true} errors={state.errors?.passwordConfirm || []} />
         <FormButton text="회원가입" />
       </form>
       <SocialLogin />

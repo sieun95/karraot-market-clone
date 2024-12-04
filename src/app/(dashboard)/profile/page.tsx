@@ -1,22 +1,7 @@
-import { getSession } from "@/lib/session";
-import { prisma } from "@/lib/prisma";
-import { redirect } from "next/navigation";
+import { getProfileAction } from "@/lib/actions/dashboard/profile";
 
 export default async function Profile() {
-  const session = await getSession();
-  if (!session.user) {
-    redirect("/log-in");
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: {
-      username: true,
-      email: true,
-      createdAt: true,
-    },
-  });
-
+  const user = await getProfileAction();
   if (!user) return null;
 
   return (

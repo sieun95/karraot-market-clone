@@ -1,33 +1,12 @@
 "use server";
 
-import { z } from "zod";
 import bcrypt from "bcrypt";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db/prisma";
+import { SignUpState } from "@/types/auth";
+import { signUpSchema } from "@/lib/validations/auth";
+import { saveCookie } from "@/lib/auth/session";
 
-const createAccountSchema = z
-  .object({
-    username: z.string().min(2, "이름은 2글자 이상이어야 합니다"),
-    email: z.string().email("올바른 이메일 주소를 입력해주세요"),
-    password: z.string().min(4, "비밀번호는 4자리 이상이어야 합니다"),
-    passwordConfirm: z.string(),
-  })
-  .refine((data) => data.password === data.passwordConfirm, {
-    message: "비밀번호가 일치하지 않습니다",
-    path: ["passwordConfirm"],
-  });
-
-interface CreateAccountState {
-  errors?: {
-    username?: string[];
-    email?: string[];
-    password?: string[];
-    passwordConfirm?: string[];
-    _form?: string[];
-  };
-  success?: boolean;
-}
-
-export async function createAccountAction(prevState: CreateAccountState, formData: FormData) {
+export async function signUpAction(prevState: SignUpState, formData: FormData) {
   // 1. 입력값 유효성 검사
   const data = {
     username: formData.get("username"),
@@ -36,7 +15,7 @@ export async function createAccountAction(prevState: CreateAccountState, formDat
     passwordConfirm: formData.get("passwordConfirm"),
   };
 
-  const result = createAccountSchema.safeParse(data);
+  const result = signUpSchema.safeParse(data);
   if (!result.success) {
     return { errors: result.error.flatten().fieldErrors };
   }
@@ -56,18 +35,25 @@ export async function createAccountAction(prevState: CreateAccountState, formDat
 
   // 3. 비밀번호 암호화
   const hashedPassword = await bcrypt.hash(result.data.password, 12);
-  console.log("원본 비밀번호:", result.data.password);
-  console.log("해싱된 비밀번호:", hashedPassword);
 
   // 4. 사용자 생성
   try {
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         username: result.data.username,
         email: result.data.email,
         password: hashedPassword,
       },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+      },
     });
+
+    // 5. 쿠키 저장
+    await saveCookie(user);
+
     return { success: true };
   } catch (error) {
     console.error("회원가입 에러:", error);
