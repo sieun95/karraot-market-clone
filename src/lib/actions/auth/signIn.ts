@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import { prisma } from "@/lib/db/prisma";
 import { SignInState } from "@/types/auth";
 import { signInSchema } from "@/lib/validations/auth";
-
+import { saveCookie } from "@/lib/auth/session";
 
 export async function signInAction(prevState: SignInState, formData: FormData) {
   const data = {
@@ -22,6 +22,8 @@ export async function signInAction(prevState: SignInState, formData: FormData) {
     where: { email: result.data.email },
     select: {
       id: true,
+      username: true,
+      email: true,
       password: true,
     },
   });
@@ -44,7 +46,7 @@ export async function signInAction(prevState: SignInState, formData: FormData) {
       },
     };
   }
-
+  await saveCookie(user);
 
   return { success: true };
 }

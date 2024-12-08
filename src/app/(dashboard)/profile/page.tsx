@@ -2,6 +2,7 @@ import { getProfileAction } from "@/lib/actions/dashboard/profile";
 
 export default async function Profile() {
   const user = await getProfileAction();
+  console.log("user : ", user);
   if (!user) return null;
 
   return (

@@ -53,7 +53,7 @@ export async function signUpAction(prevState: SignUpState, formData: FormData) {
 
     // 5. 쿠키 저장
     await saveCookie(user);
-
+    console.log("회원가입 성공");
     return { success: true };
   } catch (error) {
     console.error("회원가입 에러:", error);

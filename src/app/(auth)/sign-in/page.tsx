@@ -14,7 +14,7 @@ export default function SignIn() {
   });
 
   if (state.success) {
-    redirect("/sign-in");
+    redirect("/");
   }
 
   return (

@@ -1,36 +1,35 @@
 "use server";
 
 import { prisma } from "@/lib/db/prisma";
-import { tweetSchema } from "@/lib/validations/tweet";
+import { getIronSession } from "iron-session";
+import { sessionOptions } from "@/lib/auth/session";
+import { SessionData } from "@/types/auth";
+import { cookies } from "next/headers";
+import { TweetState } from "@/types/users";
 
-interface TweetState {
-  errors?: {
-    content?: string[];
-    _form?: string[];
-  };
-  success?: boolean;
-}
+export async function addTweetAction(prevState: TweetState, formData: FormData) {
+  const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+  const userId = session.user?.id;
+  const content = formData.get("content") as string | null;
 
-export async function addTweetAction(prevState: TweetState, formData: FormData): Promise<TweetState> {
-  const data = {
-    content: formData.get("content"),
-  };
-
-  const result = tweetSchema.safeParse(data);
-  if (!result.success) {
-    return { errors: result.error.flatten().fieldErrors };
+  if (content === null) {
+    return { success: false, error: "트윗 내용이 비어 있습니다." };
   }
 
+  console.log("userId : ", userId);
+
   try {
-    await prisma.tweet.create({
+    const tweet = await prisma.tweet.create({
       data: {
-        content: result.data.content,
+        content,
+        user: {
+          connect: { id: userId },
+        },
       },
     });
-
-    return { success: true };
+    return { success: true, tweet };
   } catch (error) {
-    console.error("트윗 저장 에러:", error);
-    return { errors: { _form: ["트윗 저장 중 오류가 발생했습니다"] } };
+    console.error("트윗 추가 에러:", error);
+    return { success: false, error: "트윗 추가 중 오류가 발생했습니다." };
   }
 }

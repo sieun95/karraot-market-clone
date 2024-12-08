@@ -21,10 +21,6 @@ export interface SessionData {
   user?: {
     id: number;
     email?: string;
-    name?: string;
+    username?: string;
   };
-}
-
-export interface SessionContent {
-  id?: number;
 }

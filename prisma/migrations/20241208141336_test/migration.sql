@@ -8,6 +8,14 @@ CREATE TABLE "User" (
     "updatedAt" DATETIME NOT NULL
 );
 
+-- CreateTable
+CREATE TABLE "Tweet" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "content" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 

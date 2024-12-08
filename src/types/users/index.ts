@@ -3,3 +3,10 @@ export interface User {
   username: string;
   email: string;
 }
+
+export interface TweetState {
+  errors?: {
+    content?: string[];
+  };
+  success?: boolean;
+}
