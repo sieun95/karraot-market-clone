@@ -14,7 +14,7 @@ export default function SignUp() {
   });
 
   if (state.success) {
-    redirect("/home");
+    redirect("/profile");
   }
 
   return (
@@ -27,13 +27,7 @@ export default function SignUp() {
         <FormInput name="username" type="text" placeholder="유저 이름" required={true} errors={state.errors?.username || []} />
         <FormInput name="email" type="email" placeholder="이메일" required={true} errors={state.errors?.email || []} />
         <FormInput name="password" type="password" placeholder="비밀번호" required={true} errors={state.errors?.password || []} />
-        <FormInput
-          name="passwordConfirm"
-          type="password"
-          placeholder="비밀번호 확인"
-          required={true}
-          errors={state.errors?.passwordConfirm || []}
-        />
+        <FormInput name="passwordConfirm" type="password" placeholder="비밀번호 확인" required={true} errors={state.errors?.passwordConfirm || []} />
         <FormButton text="회원가입" />
       </form>
       <SocialLogin />

@@ -10,26 +10,25 @@ import { TweetState } from "@/types/users";
 export async function addTweetAction(prevState: TweetState, formData: FormData) {
   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
   const userId = session.user?.id;
-  const content = formData.get("content") as string | null;
 
-  if (content === null) {
-    return { success: false, error: "트윗 내용이 비어 있습니다." };
+  if (!userId) {
+    return { errors: { _form: ["로그인이 필요합니다"] } };
   }
 
-  console.log("userId : ", userId);
+  const content = formData.get("content") as string;
+  if (!content) {
+    return { errors: { content: ["내용을 입력해주세요"] } };
+  }
 
   try {
-    const tweet = await prisma.tweet.create({
+    await prisma.tweet.create({
       data: {
         content,
-        user: {
-          connect: { id: userId },
-        },
+        userId,
       },
     });
-    return { success: true, tweet };
+    return { success: true };
   } catch (error) {
-    console.error("트윗 추가 에러:", error);
-    return { success: false, error: "트윗 추가 중 오류가 발생했습니다." };
+    return { errors: { _form: ["트윗 저장 중 오류가 발생했습니다"] } };
   }
 }

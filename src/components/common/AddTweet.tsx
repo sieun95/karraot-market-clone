@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormState } from "react-dom";
-import { addTweetAction } from "@/lib/actions/dashboard/tweet";
+import { addTweetAction } from "@/lib/actions/dashboard/addTweet";
 import FormInput from "@/components/ui/form-input";
 import FormButton from "@/components/ui/form-btn";
 
